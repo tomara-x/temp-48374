@@ -33,12 +33,12 @@ jobs:
           if [ $scheme = default ]; then scheme=$(cat default); fi
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
-          xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
+          xcodebuild clean build -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
           name: nailgirl-mac
-          path: nailgirl\Builds\MacOSX
+          path: nailgirl/Builds/MacOSX
 
   win:
     runs-on: windows-latest
@@ -78,4 +78,5 @@ jobs:
         #      nailgirl/Builds/VisualStudio2019/x64/Release/VST3/nailgirl.vst3
         #      nailgirl.zip
 
-
+  #release gonna needs: [mac, win]
+  #and download artifacts
