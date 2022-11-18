@@ -6,17 +6,11 @@ on:
       - 'nailgirl/**'
 
 env:
-  # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: ./nailgirl/Builds/VisualStudio2019/nailgirl.sln
-
-  # Configuration type to build.
-  # You can convert this to a build matrix if you need coverage of multiple configuration types.
-  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
 jobs:
   mac:
-    name: Build and analyse default scheme using xcodebuild command
     runs-on: macos-latest
 
     steps:
@@ -34,9 +28,9 @@ jobs:
         env:
           scheme: ${{ 'default' }}
         run: |
+          cd nailgirl/Builds/MacOSX
           if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\nailgirl.xcodeproj\$`"; fi
-          #just give it the path here, right?
+          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then filetype_parameter="workspace" && file_to_build="`ls -A | grep -i \\.xcworkspace\$`"; else filetype_parameter="project" && file_to_build="`ls -A | grep -i \\.xcodeproj\$`"; fi
           file_to_build=`echo $file_to_build | awk '{$1=$1;print}'`
           xcodebuild clean build analyze -scheme "$scheme" -"$filetype_parameter" "$file_to_build" | xcpretty && exit ${PIPESTATUS[0]}
       - name: save artifact
