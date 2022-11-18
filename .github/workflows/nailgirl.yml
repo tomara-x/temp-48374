@@ -15,8 +15,7 @@ env:
   BUILD_CONFIGURATION: Release
 
 jobs:
-
-  build mac:
+  mac:
     name: Build and analyse default scheme using xcodebuild command
     runs-on: macos-latest
 
@@ -43,11 +42,10 @@ jobs:
       - name: save artifact
         uses: actions/upload-artifact@v3
         with:
-          name: nailgirl-win
-          path: nailgirl\Builds\VisualStudio2019
+          name: nailgirl-mac
+          path: nailgirl\Builds\MacOSX
 
-
-  build win:
+  win:
     runs-on: windows-latest
 
     steps:
