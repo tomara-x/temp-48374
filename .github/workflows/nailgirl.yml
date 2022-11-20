@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'nailgirl/**'
-      #- '.github/workflows/nailgirl.yml' #testing
+      - '.github/workflows/nailgirl.yml' #testing
 
 jobs:
   mac:
@@ -52,10 +52,6 @@ jobs:
     - name: build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=Release nailgirl/Builds/VisualStudio2019/nailgirl.sln
-      
-     #- name: ziptie..
-     #  shell: bash
-     #  run: 7z a -tzip nailgirl.zip -r nailgirl/Builds/VisualStudio2019/x64/Release
 
     - name: save artifacts
       uses: actions/upload-artifact@v3
@@ -63,17 +59,6 @@ jobs:
         name: nailgirl-win
         path: |
           nailgirl\Builds\VisualStudio2019
-
-        #- name: release
-        #  uses: "marvinpinto/action-automatic-releases@latest"
-        #  with:
-        #    repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        #    automatic_release_tag: "nailgirl"
-        #    prerelease: false
-        #    title: "nailgirl"
-        #    files: |
-        #      nailgirl/Builds/VisualStudio2019/x64/Release/VST3/nailgirl.vst3
-        #      nailgirl.zip
 
   release:
     runs-on: ubuntu-latest
@@ -83,4 +68,14 @@ jobs:
       - name: list
         run: |
           ls -laR
-      #svenstaro/upload-release-action
+          mkdir out
+          echo test > out/mage
+      - name: release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: out/*
+          tag: nailgirl
+          overwrite: false
+          file_glob: true
+          body: "mage"
