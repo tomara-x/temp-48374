@@ -9,7 +9,6 @@ on:
 jobs:
   mac:
     runs-on: macos-latest
-
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -40,25 +39,21 @@ jobs:
 
   win:
     runs-on: windows-latest
-
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
-
     - name: add msbuild to path
       uses: microsoft/setup-msbuild@v1.1
-
     - name: build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=Release nailgirl/Builds/VisualStudio2019/nailgirl.sln
-
     - name: save artifacts
       uses: actions/upload-artifact@v3
       with:
         name: nailgirl-win
         path: |
-          nailgirl\Builds\VisualStudio2019
+          nailgirl\Builds\VisualStudio2019\x64\Release
 
   release:
     runs-on: ubuntu-latest
@@ -67,15 +62,17 @@ jobs:
       - uses: actions/download-artifact@v3
       - name: list
         run: |
-          ls -laR
-          mkdir out
-          echo test > out/mage
+          mkdir void
+          zip -r nailgirl-mac-vst.zip nailgirl-mac/nailgirl.vst3/
+          zip -r nailgirl-mac.zip nailgirl-mac/
+          zip -r nailgirl-win.zip nailgirl-win/
+          cp nailgirl-mac-vst.zip nailgirl-mac.zip nailgirl-win/VST3/nailgirl.vst3 nailgirl-win.zip void/
       - name: release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: out/*
+          file: void/*
           tag: nailgirl
           overwrite: false
           file_glob: true
-          body: "mage"
+          body: "void"
